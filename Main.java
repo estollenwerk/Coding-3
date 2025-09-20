@@ -1,44 +1,49 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 public class Main
 {
-    public static int occurance(String str){
-        // had AI teach me how to manipulate arrays
-        String[] word = str.split(" ");
-        // had AI teach me how to change an array into an arraylist
-        ArrayList<String> words = new ArrayList<> (Arrays.asList(word)); 
-        for(int i = 0; i < words.length; i++){
-            int count = 0;
-            for(int j = i + 1; j < words.length; j++){
-                if(words.get(i).equals(words.get(j))){
-                    count++;
-                }
-                
+    public static int BinarySearch(int[] numbers, int numbersSize, int key) { // classic Binary search
+   int mid = 0;
+   int low = 0;
+   int high = numbersSize - 1;
+   
+   while (high >= low) {
+      mid = (high + low) / 2;
+      if (numbers[mid] < key) {
+         low = mid + 1;
+      }
+      else if (numbers[mid] > key) {
+         high = mid - 1;
+      }
+      else {
+         return numbers[mid];
+      }
+   }
+   
+   return -1;
+}
+public static int MatrixSearch(int[][] arr, int key){ //changed this to return an int instead of an array because that makes more sense
+ // Step 1: Flatten the matrix into a 1D array
+        int rows = arr.length;
+        int cols = arr[0].length;
+        int[] flatArray = new int[rows * cols]; //makes an array with the number of elements in the matrix
+        int index = 0;
+
+        for (int[] row : arr) { //advanced form of for loop, loops through the row part of the matrix
+            for (int element : row) {
+                flatArray[index++] = element;
             }
-            
-        }
-        return count;
-        }
-        //Function doesn't work properly and I couldn't figure out how to get it to return more than one Integer
-    }   //Didn't give myself enough time, I will start trying to code sooner rather than waiting.
-    public static boolean unique(String str) {
-        for(int i = 0; i < str.length(); i++){
-            for(int j = i + 1; j < str.length(); j++){
-            if(str.charAt(i) == str.charAt(j)){
-                return false;
-            }
-            }
-            
-        }
-        return true;
-    }
+        };
+        // Step 2: Sort the 1D array
+        Arrays.sort(flatArray);
+        return BinarySearch(flatArray, index, key);
+}
+
 	public static void main(String[] args) {
-		String str = "Hey";
-		Boolean result = unique(str);
-		System.out.println(result);
-		int resultTwo = occurance("in the beginning god created the heavens and the earth");
-		System.out.println(resultTwo);
+	int[][]	arr = {{1,  2, 3, 4},
+                    {5,  6, 7, 8},
+                    {9, 10,11,12}};
+    int key = 6;
+    int result = MatrixSearch(arr, key);
+    System.out.println(result);
 	}
 }
-	}
-
