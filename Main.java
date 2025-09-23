@@ -1,49 +1,62 @@
 import java.util.Arrays;
+import java.util.Random;
 public class Main
 {
-    public static int BinarySearch(int[] numbers, int numbersSize, int key) { // classic Binary search
-   int mid = 0;
-   int low = 0;
-   int high = numbersSize - 1;
-   
-   while (high >= low) {
-      mid = (high + low) / 2;
-      if (numbers[mid] < key) {
-         low = mid + 1;
-      }
-      else if (numbers[mid] > key) {
-         high = mid - 1;
-      }
-      else {
-         return numbers[mid];
-      }
-   }
-   
-   return -1;
-}
-public static int MatrixSearch(int[][] arr, int key){ //changed this to return an int instead of an array because that makes more sense
- // Step 1: Flatten the matrix into a 1D array
-        int rows = arr.length;
-        int cols = arr[0].length;
-        int[] flatArray = new int[rows * cols]; //makes an array with the number of elements in the matrix
-        int index = 0;
-
-        for (int[] row : arr) { //advanced form of for loop, loops through the row part of the matrix
-            for (int element : row) {
-                flatArray[index++] = element;
+    public static int[] randomUnique(int start, int end, int total){
+        //creating an array of size total that has random numbers added into it between the range of start and end
+        Random random = new Random();
+        int[] numbersArray = new int[total];
+        for(int i = 0; i < total; i++){
+            numbersArray[i] = random.nextInt(end - start + 1) + start;
+        }
+        //checking for duplicate and replacing it with a new number if it is duplicate
+        for(int j = 0; j < numbersArray.length; j++){ 
+            for(int k = j + 1; k < numbersArray.length; k++){
+                if(numbersArray[j] == numbersArray[k]){
+                    numbersArray[j] = random.nextInt(end - start + 1) + start;
+                }
             }
-        };
-        // Step 2: Sort the 1D array
-        Arrays.sort(flatArray);
-        return BinarySearch(flatArray, index, key);
-}
+        }
+        return numbersArray;
+    }
+    //scaning array for the target numer and returning true if it is in there and false if it isnt
+    public static boolean scan(int[] input, int target){
+        for(int i = 0; i < input.length; i++){
+            if(input[i] == target){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean stor(int[] input, int target) {
+    int largest = input[0];
+        for (int i = 1; i < input.length; i++) {
+        if (input[i] > largest) {
+            largest = input[i];
+        }
+        }
 
+    int[] bigArray = new int[largest + 1];
+        for (int j = 0; j < input.length; j++) {
+        bigArray[input[j]] = 1;
+        }
+
+        if (target >= 0 && target <= largest) {
+        return bigArray[target] == 1;
+        }
+    return false;
+}
+   
 	public static void main(String[] args) {
-	int[][]	arr = {{1,  2, 3, 4},
-                    {5,  6, 7, 8},
-                    {9, 10,11,12}};
-    int key = 6;
-    int result = MatrixSearch(arr, key);
-    System.out.println(result);
+	    int begining = 1;
+	    int ending = 50;
+	    int group = 6;
+	    int tracker = 12;
+	    int[] result = randomUnique(begining, ending, group);
+		System.out.println(Arrays.toString(result));
+		boolean hello = scan(result, tracker);
+		System.out.println(hello);
+		boolean goodbye = stor(result, 9);
+		System.out.println(goodbye);
 	}
 }
