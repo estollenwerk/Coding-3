@@ -1,49 +1,105 @@
 import java.util.Arrays;
-public class Main
-{
-    public static int BinarySearch(int[] numbers, int numbersSize, int key) { // classic Binary search
-   int mid = 0;
-   int low = 0;
-   int high = numbersSize - 1;
-   
-   while (high >= low) {
-      mid = (high + low) / 2;
-      if (numbers[mid] < key) {
-         low = mid + 1;
-      }
-      else if (numbers[mid] > key) {
-         high = mid - 1;
-      }
-      else {
-         return numbers[mid];
-      }
-   }
-   
-   return -1;
-}
-public static int MatrixSearch(int[][] arr, int key){ //changed this to return an int instead of an array because that makes more sense
- // Step 1: Flatten the matrix into a 1D array
-        int rows = arr.length;
-        int cols = arr[0].length;
-        int[] flatArray = new int[rows * cols]; //makes an array with the number of elements in the matrix
-        int index = 0;
+import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
 
-        for (int[] row : arr) { //advanced form of for loop, loops through the row part of the matrix
-            for (int element : row) {
-                flatArray[index++] = element;
+public class Main {
+    public static int[] randomUnique(int start, int end, int total) { // used AI to find a working randomUnique
+        Random random = new Random();
+        int[] numbersArray = new int[total];
+        Set<Integer> used = new HashSet<>();
+
+        for (int i = 0; i < total; i++) {
+            int num;
+            do {
+                num = random.nextInt(end - start + 1) + start;
+            } while (used.contains(num));
+            numbersArray[i] = num;
+            used.add(num);
+        }
+
+        return numbersArray;
+    }
+
+    public static void bubbleSort(int[] arr) { //Used AI to make a bubble sort method for me
+        if (arr == null || arr.length < 2) return;
+
+        for (int i = 0; i < arr.length - 1; i++) {
+            boolean swapped = false;
+
+            for (int j = 0; j < arr.length - 1 - i; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true;
+                }
             }
-        };
-        // Step 2: Sort the 1D array
-        Arrays.sort(flatArray);
-        return BinarySearch(flatArray, index, key);
+
+            if (!swapped) break;
+        }
+    }
+
+    public static void selectionSort(int[] numbers) {
+        for (int i = 0; i < numbers.length - 1; i++) {
+            int indexSmallest = i;
+            for (int j = i + 1; j < numbers.length; j++) {
+                if (numbers[j] < numbers[indexSmallest]) {
+                    indexSmallest = j;
+                }
+            }
+
+            int temp = numbers[i];
+            numbers[i] = numbers[indexSmallest];
+            numbers[indexSmallest] = temp;
+        }
+    }
+
+    public static void main(String[] args) {
+        int beginning = 100;
+        int after = 300;
+        int total = 100;
+
+        int[] original = randomUnique(beginning, after, total);
+        ArrayDuplicator duplicator = new ArrayDuplicator();
+        ArrayPair duplicated = duplicator.duplicateAndReturnBoth(original);
+        long start1 = System.currentTimeMillis();
+        long start2 = System.nanoTime();
+        selectionSort(original);
+        long finish1 = System.currentTimeMillis();
+        long finish2 = System.nanoTime();
+        long start3 = System.currentTimeMillis();
+        long start4 = System.nanoTime();
+        bubbleSort(duplicated.duplicate);
+        long finish3 = System.currentTimeMillis();;
+        long finish4 = System.nanoTime();
+long timeElapsed1 = finish1 - start1;
+long timeElapsed2 = finish2 - start2;
+long timeElapsed3 = finish3 - start3;
+long timeElapsed4 = finish4 - start4;
+    System.out.println(timeElapsed1);
+    System.out.println(timeElapsed2);
+    System.out.println(timeElapsed3);
+    System.out.println(timeElapsed4);
+    }
 }
 
-	public static void main(String[] args) {
-	int[][]	arr = {{1,  2, 3, 4},
-                    {5,  6, 7, 8},
-                    {9, 10,11,12}};
-    int key = 6;
-    int result = MatrixSearch(arr, key);
-    System.out.println(result);
-	}
+class ArrayPair {
+    public int[] original;
+    public int[] duplicate;
+
+    public ArrayPair(int[] original, int[] duplicate) {
+        this.original = original;
+        this.duplicate = duplicate;
+    }
+}
+
+class ArrayDuplicator {
+    public ArrayPair duplicateAndReturnBoth(int[] input) {
+        int[] copy = new int[input.length];
+        for (int i = 0; i < input.length; i++) {
+            copy[i] = input[i];
+        }
+        return new ArrayPair(input, copy);
+    }
 }
