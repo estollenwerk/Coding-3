@@ -1,49 +1,30 @@
-import java.util.Arrays;
 public class Main
 {
-    public static int BinarySearch(int[] numbers, int numbersSize, int key) { // classic Binary search
-   int mid = 0;
-   int low = 0;
-   int high = numbersSize - 1;
-   
-   while (high >= low) {
-      mid = (high + low) / 2;
-      if (numbers[mid] < key) {
-         low = mid + 1;
-      }
-      else if (numbers[mid] > key) {
-         high = mid - 1;
-      }
-      else {
-         return numbers[mid];
-      }
-   }
-   
-   return -1;
-}
-public static int MatrixSearch(int[][] arr, int key){ //changed this to return an int instead of an array because that makes more sense
- // Step 1: Flatten the matrix into a 1D array
-        int rows = arr.length;
-        int cols = arr[0].length;
-        int[] flatArray = new int[rows * cols]; //makes an array with the number of elements in the matrix
-        int index = 0;
-
-        for (int[] row : arr) { //advanced form of for loop, loops through the row part of the matrix
-            for (int element : row) {
-                flatArray[index++] = element;
+    public static int disciplesTrained(long startingDisciples, long peopleInWorld){
+        int years = 0;
+        while(peopleInWorld > startingDisciples){
+            startingDisciples = startingDisciples * 2;
+            years++;
+        }
+        return years;
+    }
+    public static long trainedDisciplesEachYear(long disciples, long peopleWorld, int yearsDone){
+        long disciplesPerYear = 1L;
+        while(peopleWorld > disciples){
+            for(int i = 1; i <= yearsDone; i++){
+                disciples = disciples * disciplesPerYear;
             }
-        };
-        // Step 2: Sort the 1D array
-        Arrays.sort(flatArray);
-        return BinarySearch(flatArray, index, key);
-}
-
+            disciplesPerYear++;
+        }
+        return disciplesPerYear;
+    }
 	public static void main(String[] args) {
-	int[][]	arr = {{1,  2, 3, 4},
-                    {5,  6, 7, 8},
-                    {9, 10,11,12}};
-    int key = 6;
-    int result = MatrixSearch(arr, key);
-    System.out.println(result);
+	    long disciples = 13L;
+	    long people = 7700000000L;
+	    int years = 50;
+	int returned = disciplesTrained(disciples, people);
+	System.out.println(returned);
+	long returned2 = trainedDisciplesEachYear(disciples, people, years);
+	System.out.println(returned2);
 	}
 }
