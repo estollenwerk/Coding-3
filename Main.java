@@ -1,49 +1,95 @@
 import java.util.Arrays;
+import java.util.Random;
 public class Main
 {
-    public static int BinarySearch(int[] numbers, int numbersSize, int key) { // classic Binary search
-   int mid = 0;
-   int low = 0;
-   int high = numbersSize - 1;
+    public static int[] randomUnique(int start, int end, int total){ 
+        //creating an array of size total that has random numbers added into it between the range of start and end
+        Random random = new Random();
+        int[] numbersArray = new int[total];
+        for(int i = 0; i < total; i++){
+            numbersArray[i] = random.nextInt(end - start + 1) + start;
+        }
+        return numbersArray;
+    }
+public static void Merge(int[] numbers,int i, int j, int k) {
+   int mergedSize = k - i + 1;                // Size of merged partition
+   int mergePos = 0;                          // Position to insert merged number
+   int leftPos = 0;                           // Position of elements in left partition
+   int rightPos = 0;                          // Position of elements in right partition
+   int[] mergedNumbers = new int[mergedSize];   // Dynamically allocates temporary array
+                                         // for merged numbers
    
-   while (high >= low) {
-      mid = (high + low) / 2;
-      if (numbers[mid] < key) {
-         low = mid + 1;
-      }
-      else if (numbers[mid] > key) {
-         high = mid - 1;
+   leftPos = i;                           // Initialize left partition position
+   rightPos = j + 1;                      // Initialize right partition position
+   
+   // Add smallest element from left or right partition to merged numbers
+   while (leftPos <= j && rightPos <= k) {
+      if (numbers[leftPos] <= numbers[rightPos]) {
+         mergedNumbers[mergePos] = numbers[leftPos];
+         leftPos++;
       }
       else {
-         return numbers[mid];
+         mergedNumbers[mergePos] = numbers[rightPos];
+         rightPos++;
+         
       }
+      mergePos++;
    }
    
-   return -1;
+   // If left partition is not empty, add remaining elements to merged numbers
+   while (leftPos <= j) {
+      mergedNumbers[mergePos] = numbers[leftPos];
+      leftPos++;
+      mergePos++;
+   }
+   
+   // If right partition is not empty, add remaining elements to merged numbers
+   while (rightPos <= k) {
+      mergedNumbers[mergePos] = numbers[rightPos];
+      rightPos++;
+      mergePos++;
+   }
+   
+   // Copy merge number back to numbers
+   for (mergePos = 0; mergePos < mergedSize; ++mergePos) {
+      numbers[i + mergePos] = mergedNumbers[mergePos];
+   }
 }
-public static int MatrixSearch(int[][] arr, int key){ //changed this to return an int instead of an array because that makes more sense
- // Step 1: Flatten the matrix into a 1D array
-        int rows = arr.length;
-        int cols = arr[0].length;
-        int[] flatArray = new int[rows * cols]; //makes an array with the number of elements in the matrix
-        int index = 0;
 
-        for (int[] row : arr) { //advanced form of for loop, loops through the row part of the matrix
-            for (int element : row) {
-                flatArray[index++] = element;
-            }
-        };
-        // Step 2: Sort the 1D array
-        Arrays.sort(flatArray);
-        return BinarySearch(flatArray, index, key);
+public static int[] MergeSort(int[] numbers, int i, int k){
+   int j = 0;
+   if (i < k) {
+      j = (i + k) / 2;  // Find the midpoint in the partition
+      
+      // Recursively sort left and right partitions
+      MergeSort(numbers, i, j);
+      MergeSort(numbers, j + 1, k);
+      
+      // Merge left and right partition in sorted order
+      Merge(numbers, i, j, k);
+      
+   }
+   return numbers;
 }
-
 	public static void main(String[] args) {
-	int[][]	arr = {{1,  2, 3, 4},
-                    {5,  6, 7, 8},
-                    {9, 10,11,12}};
-    int key = 6;
-    int result = MatrixSearch(arr, key);
-    System.out.println(result);
+	    int start = 20;
+	    int end = 500;
+	    int total = 100000;
+	int[] unSorted = randomUnique(start, end, total);
+	int i = 0;
+	int k = unSorted.length - 1;
+	long start1 = System.currentTimeMillis();
+    long start2 = System.nanoTime();
+    int[] sorted = MergeSort(unSorted, i, k);
+    long finish1 = System.currentTimeMillis();;
+    long finish2 = System.nanoTime();
+    long timeElapsed1 = finish1 - start1;
+    long timeElapsed2 = finish2 - start2;
+    System.out.println("Milliseconds: " + timeElapsed1);
+    System.out.println("Nanoseconds: " + timeElapsed2);
+    for(int j = 0; j < sorted.length; j++){
+    System.out.print(sorted[j] + " ");
+}
+System.out.println(); // Add newline after printing
 	}
 }
