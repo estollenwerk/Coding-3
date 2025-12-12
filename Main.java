@@ -1,3 +1,24 @@
+public class Main {
+    public static void main(String[] args) {
+        HTChaining ht = new HTChaining(5);
+
+        ht.Insert(10);
+        ht.Insert(15);
+        ht.Insert(20);
+        ht.Insert(30);
+        ht.Insert(40);
+        ht.Insert(25);
+        ht.Insert(35);
+
+        System.out.println(ht.Search(15)); // true
+        System.out.println(ht.Search(99)); // false
+
+        ht.Delete(15);
+        System.out.println(ht.Search(15)); // false
+    }
+}
+
+// Hash table with separate chaining
 class HTChaining {
     public LinkedList[] table;
     public int size;
@@ -10,54 +31,112 @@ class HTChaining {
         }
     }
 
-    public int Hashing(int value) {
+    private int Hashing(int value) {
         return value % size;
     }
+    
+    public Integer Get(int value) {
+        int index = Hashing(value);
+        Node node = table[index].Search(value);
+        if (node != null) {
+            return node.Payload; // return the stored value
+        }
+        return null; // not found
+    }
 
-    // Existing chaining insert
+
+
     public void Insert(int value) {
-        int index = this.Hashing(value);
-        this.table[index].Append(value);
+        int index = Hashing(value);
+        table[index].Append(value);
     }
 
-    // 🔥 New probing insert (linear probing)
-    public void InsertProbing(int value, int[] probeTable) {
-        int index = this.Hashing(value);
+    public boolean Search(int value) {
+        int index = Hashing(value);
+        return table[index].Search(value) != null;
+    }
 
-        // Linear probing: move forward until empty slot found
-        while (probeTable[index] != 0) {
-            index = (index + 1) % size; // wrap around
+    public void Delete(int value) {
+        int index = Hashing(value);
+        table[index].Delete(value);
+    }
+    
+    public void Resize(int newSize) {
+        LinkedList[] oldTable = table;
+        this.size = newSize;
+        this.table = new LinkedList[newSize];
+        for (int i = 0; i < newSize; i++) {
+            this.table[i] = new LinkedList();
         }
-        probeTable[index] = value;
-    }
 
-    // Search with probing
-    public boolean SearchProbing(int value, int[] probeTable) {
-        int index = this.Hashing(value);
-
-        // Linear probing search
-        int startIndex = index;
-        while (probeTable[index] != 0) {
-            if (probeTable[index] == value) {
-                return true;
+        // rehash all elements
+        for (LinkedList bucket : oldTable) {
+            Node node = bucket.Header;
+            while (node != null) {
+                this.Insert(node.Payload);
+                node = node.NextNode;
             }
-            index = (index + 1) % size;
-            if (index == startIndex) break; // full loop
         }
-        return false;
     }
 
-    // Delete with probing (simple version: mark as -1)
-    public void DeleteProbing(int value, int[] probeTable) {
-        int index = this.Hashing(value);
-        int startIndex = index;
-        while (probeTable[index] != 0) {
-            if (probeTable[index] == value) {
-                probeTable[index] = -1; // tombstone marker
+}
+
+// Linked list for chaining
+class LinkedList {
+    public Node Header;
+
+    public LinkedList() {
+        this.Header = null;
+    }
+
+    public Node Search(int value) {
+        Node node = Header;
+        while (node != null) {
+            if (node.Payload == value) return node;
+            node = node.NextNode;
+        }
+        return null;
+    }
+
+    public void Append(int value) {
+        if (Search(value) != null) return; // avoid duplicates
+        if (Header == null) {
+            Header = new Node(value);
+        } else {
+            Node node = Header;
+            while (node.NextNode != null) {
+                node = node.NextNode;
+            }
+            node.NextNode = new Node(value);
+        }
+    }
+
+    public void Delete(int value) {
+        if (Header == null) return;
+        if (Header.Payload == value) {
+            Header = Header.NextNode;
+            return;
+        }
+        Node prev = Header;
+        Node curr = Header.NextNode;
+        while (curr != null) {
+            if (curr.Payload == value) {
+                prev.NextNode = curr.NextNode;
                 return;
             }
-            index = (index + 1) % size;
-            if (index == startIndex) break;
+            prev = curr;
+            curr = curr.NextNode;
         }
+    }
+}
+
+// Node for linked list
+class Node {
+    int Payload;
+    Node NextNode;
+
+    public Node(int value) {
+        this.Payload = value;
+        this.NextNode = null;
     }
 }
