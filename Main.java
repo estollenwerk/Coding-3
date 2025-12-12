@@ -1,228 +1,123 @@
-// Main class: entry point of the program
+import java.util.*;
+
 public class Main {
+
     public static void main(String[] args) {
-        System.out.println("hello world");
+        String[] tests = {
+            "3 + 4 * 2 / (1 - 5)^2^3",  // mix of operators and parentheses
+            "10 + 2 * 6",               // should be 22
+            "100 * (2 + 12)",           // should be 1400
+            "100 * (2 + 12) / 14",      // should be 100
+            "5 - 3 - 1",                // check left-associativity
+            "2 ^ 3 ^ 2"                 // check right-associativity (2^(3^2) = 512)
+        };
 
-        // Create a single node with value 1
-        Node node = new Node(1);
-        System.out.println(node.toString()); // prints "1"
-
-        // Create a new linked list
-        SinglyLinkedList list = new SinglyLinkedList();
-
-        // Create several nodes with different values
-        Node n1 = new Node(10);
-        Node n2 = new Node(20);
-        Node n3 = new Node(30);
-        Node n4 = new Node(10);
-        Node n5 = new Node(20);
-        Node n6 = new Node(30);
-        Node n7 = new Node(3);
-        Node n8 = new Node(4);
-        Node n9 = new Node(5);
-
-        // Append nodes to the list (adds to the end)
-        list.append(n1);
-        list.append(n2);
-        list.append(n3);
-        list.append(n4);
-        list.append(n5);
-        list.append(n6);
-        System.out.println("List after appends: " + list);
-
-        // Prepend a node (adds to the front)
-        list.prepend(n7);
-        System.out.println("List after prepend: " + list);
-
-        // Remove the last node (tail)
-        list.removeTail();
-        System.out.println("List after removeTail: " + list);
-
-        // Insert node n8 after node n3
-        list.insertAfter(n3, n8);
-        System.out.println("List after insertAfter(n3, n8): " + list);
-
-        // Insert node n9 before node n2
-        list.insertBefore(n2, n9);
-        System.out.println("List after insertBefore(n2, n9): " + list);
-
-        // Delete node with value 4 (removes n8)
-        list.delete(4);
-        System.out.println("List after delete(4): " + list);
-
-        // Sort the list using selection sort
-        list.sort();
-        System.out.println("List after sort: " + list);
-    }
-}
-
-// Node class: represents a single element in the linked list
-class Node {
-    public int value;       // data stored in the node
-    public Node nextNode;   // pointer to the next node
-
-    // Default constructor: creates a node with value 0
-    public Node() {
-        this.value = 0;
-        this.nextNode = null;
-    }
-
-    // Constructor: creates a node with a given value
-    public Node(int value) {
-        this.value = value;
-        this.nextNode = null;
-    }
-
-    // toString: returns the value as a string
-    @Override
-    public String toString() {
-        return "" + this.value;
-    }
-}
-
-// SinglyLinkedList class: manages the linked list
-class SinglyLinkedList {
-    public Node Header; // first node in the list
-    public Node Tail;   // last node in the list
-
-    // Constructor: creates an empty list
-    public SinglyLinkedList() {
-        this.Header = null;
-        this.Tail = null;
-    }
-
-    // Prepend: add a node at the beginning
-    public boolean prepend(Node newNode) {
-        if (newNode == null) return false;
-        if (this.Header == null) {
-            // If list is empty, newNode is both head and tail
-            this.Header = newNode;
-            this.Tail = newNode;
-            return true;
-        }
-        // Otherwise, link newNode before the current head
-        newNode.nextNode = this.Header;
-        this.Header = newNode;
-        return true;
-    }
-
-    // Append: add a node at the end
-    public boolean append(Node n) {
-        if (n == null) return false;
-        if (this.Header == null) {
-            // If list is empty, newNode is both head and tail
-            this.Header = n;
-            this.Tail = n;
-        } else {
-            // Link current tail to new node, then update tail
-            this.Tail.nextNode = n;
-            this.Tail = n;
-        }
-        return true;
-    }
-
-    // RemoveTail: delete the last node
-    public void removeTail() {
-        if (this.Header == null) return; // empty list
-        if (this.Header.nextNode == null) {
-            // Only one node → clear list
-            this.Header = null;
-            this.Tail = null;
-            return;
-        }
-        // Traverse until the node before the tail
-        Node current = this.Header;
-        while (current.nextNode != null && current.nextNode.nextNode != null) {
-            current = current.nextNode;
-        }
-        // Remove tail
-        current.nextNode = null;
-        this.Tail = current;
-    }
-
-    // InsertAfter: insert newNode after preNode
-    public boolean insertAfter(Node preNode, Node newNode) {
-        if (preNode == null || newNode == null) return false;
-        newNode.nextNode = preNode.nextNode;
-        preNode.nextNode = newNode;
-        if (preNode == this.Tail) this.Tail = newNode; // update tail if needed
-        return true;
-    }
-
-    // InsertBefore: insert newNode before targetNode
-    public boolean insertBefore(Node targetNode, Node newNode) {
-        if (targetNode == null || newNode == null) return false;
-        if (this.Header == null) return false;
-        if (targetNode == this.Header) {
-            // Special case: inserting before head
-            newNode.nextNode = this.Header;
-            this.Header = newNode;
-            return true;
-        }
-        // Traverse until the node before targetNode
-        Node current = this.Header;
-        while (current.nextNode != null && current.nextNode != targetNode) {
-            current = current.nextNode;
-        }
-        if (current.nextNode == targetNode) {
-            newNode.nextNode = targetNode;
-            current.nextNode = newNode;
-            return true;
-        }
-        return false; // target not found
-    }
-
-    // Delete: remove the first node with a given value
-    public boolean delete(int value) {
-        if (this.Header == null) return false;
-        if (this.Header.value == value) {
-            // Special case: deleting head
-            this.Header = this.Header.nextNode;
-            if (this.Header == null) this.Tail = null; // list became empty
-            return true;
-        }
-        // Traverse until the node before the one to delete
-        Node current = this.Header;
-        while (current.nextNode != null && current.nextNode.value != value) {
-            current = current.nextNode;
-        }
-        if (current.nextNode != null) {
-            Node nodeToDelete = current.nextNode;
-            current.nextNode = nodeToDelete.nextNode;
-            if (nodeToDelete == this.Tail) this.Tail = current; // update tail
-            return true;
-        }
-        return false; // value not found
-    }
-
-    // toString: print the list as "value -> value -> ... -> null"
-    @Override
-    public String toString() {
-        if (this.Header == null) return "empty";
-        StringBuilder sb = new StringBuilder();
-        Node current = this.Header;
-        while (current != null) {
-            sb.append(current.value).append(" -> ");
-            current = current.nextNode;
-        }
-        sb.append("null");
-        return sb.toString();
-    }
-
-    // Sort: selection sort by swapping node values
-    public void sort() {
-        if (this.Header == null || this.Header.nextNode == null) return;
-        for (Node current = this.Header; current != null; current = current.nextNode) {
-            Node minNode = current;
-            for (Node next = current.nextNode; next != null; next = next.nextNode) {
-                if (next.value < minNode.value) minNode = next;
-            }
-            // Swap values between current and minNode
-            if (minNode != current) {
-                int temp = current.value;
-                current.value = minNode.value;
-                minNode.value = temp;
+        for (String expr : tests) {
+            try {
+                List<String> postfix = infixToPostfix(expr);
+                double result = evalPostfix(postfix);
+                System.out.println(expr + " = " + result);
+            } catch (Exception e) {
+                System.out.println(expr + " -> Error: " + e.getMessage());
             }
         }
+    }
+
+    // Convert infix expression to postfix using Shunting Yard
+    public static List<String> infixToPostfix(String expr) {
+        List<String> output = new ArrayList<>();
+        Stack<String> operators = new Stack<>();
+
+        StringTokenizer tokenizer = new StringTokenizer(expr, "+-*/^() ", true);
+
+        while (tokenizer.hasMoreTokens()) {
+            String token = tokenizer.nextToken().trim();
+            if (token.isEmpty()) continue;
+
+            if (isNumber(token)) {
+                output.add(token);
+            } else if (isOperator(token)) {
+                while (!operators.isEmpty() && isOperator(operators.peek())
+                        && ((isLeftAssociative(token) && precedence(token) <= precedence(operators.peek()))
+                        || (!isLeftAssociative(token) && precedence(token) < precedence(operators.peek())))) {
+                    output.add(operators.pop());
+                }
+                operators.push(token);
+            } else if (token.equals("(")) {
+                operators.push(token);
+            } else if (token.equals(")")) {
+                while (!operators.isEmpty() && !operators.peek().equals("(")) {
+                    output.add(operators.pop());
+                }
+                if (operators.isEmpty() || !operators.peek().equals("(")) {
+                    throw new IllegalArgumentException("Mismatched parentheses");
+                }
+                operators.pop(); // remove "("
+            } else {
+                throw new IllegalArgumentException("Invalid token: " + token);
+            }
+        }
+
+        while (!operators.isEmpty()) {
+            String op = operators.pop();
+            if (op.equals("(") || op.equals(")")) {
+                throw new IllegalArgumentException("Mismatched parentheses");
+            }
+            output.add(op);
+        }
+
+        return output;
+    }
+
+    // Evaluate postfix expression
+    public static double evalPostfix(List<String> postfix) {
+        Stack<Double> stack = new Stack<>();
+
+        for (String token : postfix) {
+            if (isNumber(token)) {
+                stack.push(Double.parseDouble(token));
+            } else if (isOperator(token)) {
+                if (stack.size() < 2) throw new IllegalArgumentException("Invalid expression");
+                double b = stack.pop();
+                double a = stack.pop();
+                switch (token) {
+                    case "+": stack.push(a + b); break;
+                    case "-": stack.push(a - b); break;
+                    case "*": stack.push(a * b); break;
+                    case "/": stack.push(a / b); break;
+                    case "^": stack.push(Math.pow(a, b)); break;
+                }
+            }
+        }
+
+        if (stack.size() != 1) throw new IllegalArgumentException("Invalid postfix evaluation");
+        return stack.pop();
+    }
+
+    // Helpers
+    private static boolean isNumber(String s) {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean isOperator(String s) {
+        return "+-*/^".contains(s);
+    }
+
+    private static int precedence(String op) {
+        switch (op) {
+            case "+": case "-": return 1;
+            case "*": case "/": return 2;
+            case "^": return 3;
+            default: return -1;
+        }
+    }
+
+    private static boolean isLeftAssociative(String op) {
+        return !op.equals("^"); // ^ is right-associative
     }
 }
